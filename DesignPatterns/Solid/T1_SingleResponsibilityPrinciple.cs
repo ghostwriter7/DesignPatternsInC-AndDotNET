@@ -1,4 +1,6 @@
-﻿namespace DesignPatterns.Solid;
+﻿using System.Diagnostics;
+
+namespace DesignPatterns.Solid;
 
 public class T1_SingleResponsibilityPrinciple
 {
@@ -7,9 +9,13 @@ public class T1_SingleResponsibilityPrinciple
         var journal = new Journal();
         journal.AddEntry("I cried today");
         journal.AddEntry("I ate a bug");
-        Console.WriteLine(journal);
+
+        var persistence = new Persistance();
+        const string filename = @"C:\Users\hrozplochowski\journal.txt";
+        persistence.SaveToFile(journal, filename, true);
     }
 
+    // One responsibility & one reason to change
     public class Journal
     {
         private readonly List<string> entries = [];
@@ -48,6 +54,14 @@ public class T1_SingleResponsibilityPrinciple
             }
 
             return journal;
+        }
+    }
+
+    public class Persistance
+    {
+        public void SaveToFile(Journal journal, string filename, bool overwrite = false) {
+            if (overwrite || !File.Exists(filename))
+                File.WriteAllText(filename, journal.ToString());
         }
     }
 }

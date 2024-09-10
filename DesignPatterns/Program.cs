@@ -1,1 +1,16 @@
-﻿
+﻿ using System.Reflection;
+
+ var assembly = typeof(Program).Assembly;
+
+ var latestType = assembly.GetTypes()
+     .Where(t => t.Name.Contains('T'))
+     .Aggregate((latestType, currentType) =>
+     {
+         var currentTypeIndex = int.Parse(currentType.Name.Remove(0, 1));
+         var latestTypeIndex = int.Parse(latestType.Name.Remove(0, 1));
+
+         return latestTypeIndex > currentTypeIndex ? latestType : currentType;
+     });
+ var methodInfo = latestType?.GetMethod("Demo", []);
+ methodInfo?.Invoke(latestType, []);
+ partial class Program() {}

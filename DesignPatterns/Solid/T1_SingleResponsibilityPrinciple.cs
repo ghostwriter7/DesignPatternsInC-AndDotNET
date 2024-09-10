@@ -30,5 +30,24 @@ public class T1_SingleResponsibilityPrinciple
         {
             return string.Join(Environment.NewLine, entries);
         }
+
+        // Violating Single Responsibility Principle...
+        public void Save(string filename)
+        {
+            File.WriteAllText(filename, ToString());
+        }
+
+        // Violating Single Responsibility Principle...
+        public static Journal Load(string filename)
+        {
+            var content = File.ReadAllLines(filename);
+            var journal = new Journal();
+            foreach (var entry in content)
+            {
+                journal.AddEntry(entry);
+            }
+
+            return journal;
+        }
     }
 }

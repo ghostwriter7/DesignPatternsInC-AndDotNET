@@ -17,20 +17,20 @@ public class T2_OpenClosedPrinciple
         }
     }
 
-    private enum Color
+    public enum Color
     {
         Red,
         Green, Blue
     }
 
-    private enum Size
+    public enum Size
     {
         Small,
         Medium,
         Large
     }
 
-    private class Product
+    public class Product
     {
         public string Name;
         public Color Color;
@@ -47,7 +47,11 @@ public class T2_OpenClosedPrinciple
         }
     }
 
-    private class ProductFilter
+    /*
+     * Any new requirement for a filter will require modification to ProductFilter
+     * therefore it's an example of violation of open-closed principle
+     */
+    private static class ProductFilter
     {
         public static IEnumerable<Product> FilterBySize(IEnumerable<Product> products, Size size)
         {

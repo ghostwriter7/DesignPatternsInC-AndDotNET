@@ -10,7 +10,7 @@ public class T1_SingleResponsibilityPrinciple
         journal.AddEntry("I cried today");
         journal.AddEntry("I ate a bug");
 
-        var persistence = new Persistance();
+        var persistence = new Persistence();
         const string filename = @"C:\Users\hrozplochowski\journal.txt";
         persistence.SaveToFile(journal, filename, true);
     }
@@ -57,7 +57,7 @@ public class T1_SingleResponsibilityPrinciple
         }
     }
 
-    public class Persistance
+    public class Persistence
     {
         public void SaveToFile(Journal journal, string filename, bool overwrite = false) {
             if (overwrite || !File.Exists(filename))

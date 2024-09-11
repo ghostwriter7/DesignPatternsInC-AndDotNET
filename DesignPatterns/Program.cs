@@ -6,8 +6,8 @@
      .Where(t => t.Name.Contains('T'))
      .Aggregate((latestType, currentType) =>
      {
-         var currentTypeIndex = int.Parse(currentType.Name.Remove(0, 1));
-         var latestTypeIndex = int.Parse(latestType.Name.Remove(0, 1));
+         var currentTypeIndex = int.Parse(currentType.Name.Split('_').ElementAt(0).Remove(0, 1));
+         var latestTypeIndex = int.Parse(latestType.Name.Split('_').ElementAt(0).Remove(0, 1));
 
          return latestTypeIndex > currentTypeIndex ? latestType : currentType;
      });

@@ -32,6 +32,8 @@ public class T12_FacetedBuilder
         {
             return $"{nameof(Street)}: {Street}, {nameof(PostalCode)}: {PostalCode}, {nameof(City)}: {City}, {nameof(CompanyName)}: {CompanyName}, {nameof(Position)}: {Position}, {nameof(AnnualIncome)}: {AnnualIncome}";
         }
+
+        public static Human operator +(Human a, Human b) => new Human() { AnnualIncome = a.AnnualIncome + b.AnnualIncome };
     }
 
     public class HumanBuilder // facade 

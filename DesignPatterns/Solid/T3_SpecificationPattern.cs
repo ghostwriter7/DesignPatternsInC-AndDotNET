@@ -24,6 +24,15 @@ public class T3_SpecificationPattern
         {
             Console.WriteLine($" - {product.Name} is green");
         }
+
+        Console.WriteLine("Large, blue items");
+        foreach (var product in betterFilter.Filter(products, new AndSpecification<Product>(
+                     new ColorSpecification(Color.Blue),
+                     new SizeSpecification(Size.Large)
+                     )))
+        {
+            Console.WriteLine($" - {product.Name} is large and blue");
+        }
     }
     
     private interface ISpecification<T>
@@ -54,5 +63,13 @@ public class T3_SpecificationPattern
     private class SizeSpecification(Size size) : ISpecification<Product>
     {
         public bool IsSatisfied(Product p) => p.Size == size;
+    }
+
+    private class AndSpecification<T>(ISpecification<T> firstSpec, ISpecification<T> secondSpec) : ISpecification<T>
+    {
+        public bool IsSatisfied(T t)
+        {
+            return firstSpec.IsSatisfied(t) && secondSpec.IsSatisfied(t);
+        }
     }
 }

@@ -44,6 +44,31 @@ public class T11_FunctionalBuilder
             return this;
         }
     }
+    
+    public sealed class ImprovedPersonBuilder : FunctionalBuilder<Person, ImprovedPersonBuilder>
+    {
+        public ImprovedPersonBuilder Called(string name) => Do((p) => p.Name = name);
+    }
+
+    public abstract class FunctionalBuilder<TSubject, TSelf> 
+        where TSubject : new() 
+        where TSelf : FunctionalBuilder<TSubject, TSelf>
+    {
+        private List<Func<TSubject, TSubject>> actions = [];
+
+        private TSelf AddAction(Action<TSubject> action)
+        {
+            actions.Add((x) => { 
+                action(x);
+                return x; 
+            });
+            return (TSelf) this;
+        }
+
+        public TSelf Do(Action<TSubject> action) => AddAction(action);
+
+        public TSubject Build() => actions.Aggregate(new TSubject(), (x, func) => func(x));
+    }
 }
 
 public static class PersonBuilderExtensions

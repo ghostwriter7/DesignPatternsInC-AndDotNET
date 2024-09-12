@@ -7,8 +7,9 @@ public class T8_Builder
     public static void Demo()
     {
         var builder = new HtmlBuilder("ul");
-        builder.AddChild("li", "hello");
-        builder.AddChild("li", "world");
+        builder
+            .AddChild("li", "hello")
+            .AddChild("li", "world");
         WriteLine(builder.ToString());
     }
 
@@ -22,7 +23,7 @@ public class T8_Builder
         private string ToString(int indent)
         {
             var sb = new StringBuilder();
-            var indentChars = new string(' ',_indentSize * indent);
+            var indentChars = new string(' ', _indentSize * indent);
             sb.AppendLine($"{indentChars}<{Name}>");
 
             if (!string.IsNullOrWhiteSpace(Text))
@@ -34,6 +35,7 @@ public class T8_Builder
             {
                 sb.AppendLine(element.ToString(indent + 1));
             }
+
             sb.Append($"{indentChars}</{Name}>");
             return sb.ToString();
         }
@@ -48,17 +50,19 @@ public class T8_Builder
     {
         private HtmlElement root = new HtmlElement(rootName, null);
 
-        public void AddChild(string childName, string childText)
+        public HtmlBuilder AddChild(string childName, string childText)
         {
             var child = new HtmlElement(childName, childText);
             root.Elements.Add(child);
+            return this;
         }
 
-        public void Clear()
+        public HtmlBuilder Clear()
         {
             root = new HtmlElement(rootName, null);
+            return this;
         }
-        
+
         public override string ToString()
         {
             return root.ToString();

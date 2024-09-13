@@ -3,7 +3,7 @@
  var assembly = typeof(Program).Assembly;
 
  var latestType = assembly.GetTypes()
-     .Where(t => t.Name.StartsWith('T'))
+     .Where(t => t.Name.StartsWith('T') && t.Name.Contains('_'))
      .Aggregate((latestType, currentType) =>
      {
          var currentTypeIndex = int.Parse(currentType.Name.Split('_').ElementAt(0).Remove(0, 1));

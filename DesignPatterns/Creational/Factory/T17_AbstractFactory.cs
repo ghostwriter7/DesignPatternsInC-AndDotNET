@@ -5,78 +5,86 @@ public class T17_AbstractFactory
     public static void Demo()
     {
         var machine = new HotDrinkMachine();
-        var drink = machine.Buy(HotDrinkMachine.AvailableDrink.Coffee, 150);
+        machine.DisplayDrinks();
+        var drink = machine.MakeDrink("Coffee", 150);
         drink.Consume();
     }
+}
 
-    public interface IHotDrink
+public interface IHotDrink
+{
+    void Consume();
+}
+
+internal class Tea : IHotDrink
+{
+    public void Consume()
     {
-        void Consume();
+        WriteLine("What a fantastic tea...");
     }
+}
 
-    private class Tea : IHotDrink
+internal class Coffee : IHotDrink
+{
+    public void Consume()
     {
-        public void Consume()
+        WriteLine("This coffee is delicious...");
+    }
+}
+
+public interface IHotDrinkFactory
+{
+    IHotDrink Prepare(int amount);
+}
+
+public class TeaFactory : IHotDrinkFactory
+{
+    public IHotDrink Prepare(int amount)
+    {
+        WriteLine($"Pouring {amount} ml of water into the cup with a tea bag... done");
+        return new Tea();
+    }
+}
+    
+public class CoffeeFactory : IHotDrinkFactory
+{
+    public IHotDrink Prepare(int amount)
+    {
+        WriteLine($"Pouring {amount} ml of water into the cup with coffee beans... done");
+        return new Coffee();
+    }
+}
+
+public class HotDrinkMachine
+{
+    private List<(string, IHotDrinkFactory)> _factories = new();
+
+    public HotDrinkMachine()
+    {
+        foreach (var type in typeof(HotDrinkMachine).Assembly.GetTypes())
         {
-            WriteLine("What a fantastic tea...");
+            if (type.IsAssignableTo(typeof(IHotDrinkFactory)) && type.IsClass)
+            {
+                var factory = Activator.CreateInstance(type) as IHotDrinkFactory;
+                _factories.Add((type.Name.Replace("Factory", string.Empty), factory));
+            }
         }
     }
 
-    private class Coffee : IHotDrink
+    public IHotDrink MakeDrink(string drink, int amount)
     {
-        public void Consume()
-        {
-            WriteLine("This coffee is delicious...");
-        }
+        var factory = _factories
+            .Single(entry => entry.Item1.Equals(drink));
+        return factory.Item2.Prepare(amount);
     }
 
-    public interface IHotDrinkFactory
+    public void DisplayDrinks()
     {
-        IHotDrink Prepare(int amount);
-    }
-
-    public class TeaFactory : IHotDrinkFactory
-    {
-        public IHotDrink Prepare(int amount)
+        WriteLine("Available drinks:");
+        foreach (var (name,_) in _factories)
         {
-            WriteLine($"Pouring {amount} ml of water into the cup with a tea bag... done");
-            return new Tea();
+            WriteLine($" -- {name}");
         }
     }
     
-    public class CoffeeFactory : IHotDrinkFactory
-    {
-        public IHotDrink Prepare(int amount)
-        {
-            WriteLine($"Pouring {amount} ml of water into the cup with coffee beans... done");
-            return new Coffee();
-        }
-    }
-
-    public class HotDrinkMachine
-    {
-        public enum AvailableDrink
-        {
-            Coffee,
-            Tea
-        }
-
-        private Dictionary<AvailableDrink, IHotDrinkFactory> _factories = new();
-
-        public HotDrinkMachine()
-        {
-            foreach (AvailableDrink availableDrink in Enum.GetValues(typeof(AvailableDrink)))
-            {
-                var factory = (IHotDrinkFactory) Activator.CreateInstance(
-                   Type.GetType($"DesignPatterns.Creational.Factory.{nameof(T17_AbstractFactory)}+{Enum.GetName(typeof(AvailableDrink), availableDrink)}Factory")     
-                );
-                _factories.Add(availableDrink, factory);
-            }
-        }
-
-        public IHotDrink Buy(AvailableDrink drink, int amount)
-        {
-            return _factories[drink].Prepare(amount);
-        }
-    }
 }

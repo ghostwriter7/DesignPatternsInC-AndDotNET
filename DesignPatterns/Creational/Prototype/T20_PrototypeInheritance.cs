@@ -1,4 +1,4 @@
-﻿namespace DesignPatterns.Creational.Prototype;
+﻿namespace DesignPatterns.Creational.Prototype.Inheritance;
 
 public class T20_PrototypeInheritance
 {

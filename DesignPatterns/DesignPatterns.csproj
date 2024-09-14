@@ -12,4 +12,10 @@
     <Folder Include="Structural\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Creational\Singleton\capitals.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

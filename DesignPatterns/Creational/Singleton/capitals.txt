@@ -1,0 +1,10 @@
+﻿Tokyo: 37,393,000  
+Delhi: 30,291,000  
+Cairo: 20,484,965  
+Beijing: 20,463,000  
+London: 9,541,000  
+Paris: 11,142,000  
+Mexico City: 21,671,908  
+Bangkok: 10,539,415  
+Moscow: 12,655,000  
+Jakarta: 10,770,000

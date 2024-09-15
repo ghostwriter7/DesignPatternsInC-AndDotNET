@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Autofac.Features.Metadata;
 using MoreLinq.Extensions;
 
 namespace DesignPatterns.Structural.Adapter;
@@ -8,17 +9,20 @@ public class T27_AdapterInDependencyInjection
     public static void Demo()
     {
         var builder = new ContainerBuilder();
-        builder.RegisterType<SaveCommand>().As<ICommand>();
-        builder.RegisterType<OpenCommand>().As<ICommand>();
-        builder.RegisterType<Button>();
+        builder.RegisterType<SaveCommand>().As<ICommand>()
+            .WithMetadata("Name", "Save");
+        builder.RegisterType<OpenCommand>().As<ICommand>()
+            .WithMetadata("Name", "Open");
+        // builder.RegisterType<Button>();
+        builder.RegisterAdapter<Meta<ICommand>, Button>((cmd) => new Button(cmd.Value, (string)cmd.Metadata["Name"]));
         builder.RegisterType<Editor>();
-        
+
         using (var container = builder.Build())
         {
             var editor = container.Resolve<Editor>();
             editor.RunAll();
         }
-    }   
+    }
 }
 
 public interface ICommand
@@ -42,11 +46,16 @@ public class OpenCommand : ICommand
     }
 }
 
-public class Button(ICommand command)
+public class Button(ICommand command, string name)
 {
     private readonly ICommand _command = command;
+    private readonly string _name = name;
 
-    public void Click() => _command.Execute();
+    public void Click()
+    {
+        WriteLine($"Executing {_name}");
+        _command.Execute();
+    }
 }
 
 public class Editor(IEnumerable<Button> buttons)

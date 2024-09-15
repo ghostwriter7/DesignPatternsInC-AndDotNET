@@ -8,10 +8,13 @@ public class T26_GenericValueAdapter
 
     public static void Demo()
     {
-        var vec2 = new Vector2i(0, 100);
+        var vec2a = new Vector2i(0, 100);
+        var vec2b = new Vector2i(50, 2);
         var vec3 = new Vector3f(3, 5, 10);
         
-        WriteLine($"Vec2: {vec2}");
+        WriteLine($"Vec2a: {vec2a}");
+        WriteLine($"Vec2b: {vec2b}");
+        WriteLine($"Vec2a + Vec2b: {vec2a + vec2b}");
         WriteLine($"Vec3: {vec3}");
     }
 }
@@ -61,7 +64,33 @@ public abstract class Vector<T, D> where D : IInteger, new()
     }
 }
 
-public class Vector2i(params int[] values) : Vector<int, Dimensions.Two>(values)
+/// <summary>
+/// Specialized class (intermediate class in hierarchy) to provide operator overloading
+/// </summary>
+public class VectorOfInts<D>(params int[] values) : Vector<int, D>(values) where D : IInteger, new()
+{
+    protected VectorOfInts() : this([])
+    {
+    }
+
+    public static VectorOfInts<D> operator +(VectorOfInts<D> lhs, VectorOfInts<D> rhs)
+    {
+        var vector = new VectorOfInts<D>();
+        for (int i = 0; i < new D().Value; i++)
+            vector[i] = lhs[i] + rhs[i];
+        return vector;
+    }
+
+    public static VectorOfInts<D> operator -(VectorOfInts<D> lhs, VectorOfInts<D> rhs)
+    {
+        var vector = new VectorOfInts<D>();
+        for (int i = 0; i < new D().Value; i++)
+            vector[i] = lhs[i] - rhs[i];
+        return vector;
+    }
+}
+
+public class Vector2i(params int[] values) : VectorOfInts<Dimensions.Two>(values)
 {
     public Vector2i() : this([])
     {

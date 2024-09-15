@@ -1,4 +1,6 @@
-﻿namespace DesignPatterns.Structural.Bridge;
+﻿using Autofac;
+
+namespace DesignPatterns.Structural.Bridge;
 
 public class T28_Bridge
 {
@@ -9,12 +11,26 @@ public class T28_Bridge
 
         var circleA = new Circle(rasterRenderer, 5);
         var circleB = new Circle(vectorRenderer, 10);
-        
+
         circleA.Draw();
         circleB.Draw();
         circleB.Resize(2);
         circleB.Draw();
-    }   
+
+        var cb = new ContainerBuilder();
+        cb.RegisterType<VectorRenderer>().As<IRenderer>().SingleInstance();
+        cb.Register<Circle>((ctx, parameters) =>
+            new Circle(ctx.Resolve<IRenderer>(), parameters.Positional<double>(0))
+        );
+
+        using (var container = cb.Build())
+        {
+            var circle = container.Resolve<Circle>(new PositionalParameter(0, 5.0));
+            circle.Draw();
+            circle.Resize(2);
+            circle.Draw();
+        }
+    }
 }
 
 public interface IRenderer
@@ -30,7 +46,7 @@ public class VectorRenderer : IRenderer
     }
 }
 
-public class RasterRenderer: IRenderer
+public class RasterRenderer : IRenderer
 {
     public void RenderCircle(double radius)
     {
@@ -49,7 +65,7 @@ public abstract class Shape(IRenderer renderer)
 public class Circle(IRenderer renderer, double radius) : Shape(renderer)
 {
     private double _radius = radius;
-    
+
     public override void Draw()
     {
         renderer.RenderCircle(_radius);
